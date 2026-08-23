@@ -9,6 +9,7 @@ void POT_init() {
   digitalWrite(PIN_POT_CS, HIGH);
   pinMode(PIN_POT_DA, OUTPUT);
   pinMode(PIN_POT_CLK, OUTPUT);
+  digitalWrite(PIN_POT_CLK, LOW);
 }
 
 // Set potentiometer position for given MPP voltage
