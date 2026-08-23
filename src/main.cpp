@@ -11,7 +11,11 @@
 // Delay between VOC measurements in milliseconds
 #define MEAS_DELAY_MS 2000
 
-// Delay between setting potentiometer and ADC capture in milliseconds
+// Delay between setting potentiometer and ADC capture in milliseconds.
+// Must be long enough for the panel/input capacitance to settle after
+// the potentiometer step change (particularly the VOC measurement,
+// where the load is removed entirely) - verify with a scope if the
+// panel or cabling changes.
 #define ADC_DELAY_MS 25
 
 // Minimum plausible VOC reading in millivolts. Below this the input is
@@ -19,7 +23,15 @@
 // regulating off a bogus reading.
 #define VOC_MIN_MV 1000
 
-// Set VMPP by using a lookup table
+// Tolerance band (in millivolts) around VMPP within which the regulation
+// loop leaves the potentiometer alone, to avoid dithering by +-1 step
+// every cycle once the setpoint has been reached.
+#define VMPP_DEADBAND_MV 20
+
+// Set VMPP by using a lookup table instead of the regulation loop below.
+// Both approaches derive VMPP from the same VOC measurement but reach the
+// potentiometer position independently (table lookup vs. iterative
+// search) - keep them in sync if the pot-to-voltage mapping changes.
 // #define ENABLE_VMPP_LOOKUP
 
 // Enable debug output on LED / TX pin
@@ -90,12 +102,12 @@ void loop() {
       // Measure actual voltage
       vmpp_now = ADC_read_voltage();
 
-      // Regulate potentiometer steps
-      if(vmpp_now > vmpp) {
+      // Regulate potentiometer steps, ignoring differences within the deadband
+      if(vmpp_now > vmpp + VMPP_DEADBAND_MV) {
         if(steps < POT_STEPS) {
           steps++;
         }
-      } else {
+      } else if(vmpp_now + VMPP_DEADBAND_MV < vmpp) {
         if(steps > 0) {
           steps--;
         }
