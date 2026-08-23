@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <avr/io.h>
+#include <avr/wdt.h>
 #include "pins.h"
 #include "adc.h"
 #include "potentiometer.h"
@@ -11,6 +13,11 @@
 
 // Delay between setting potentiometer and ADC capture in milliseconds
 #define ADC_DELAY_MS 25
+
+// Minimum plausible VOC reading in millivolts. Below this the input is
+// treated as disconnected/invalid and charging is left disabled instead of
+// regulating off a bogus reading.
+#define VOC_MIN_MV 1000
 
 // Set VMPP by using a lookup table
 // #define ENABLE_VMPP_LOOKUP
@@ -34,10 +41,18 @@ void setup() {
 #endif
   ADC_init();
   POT_init();
+
+  // Enable watchdog reset in case the main loop ever hangs.
+  // ATtiny412 uses the newer WDT.CTRLA peripheral (CCP-protected write),
+  // not the classic WDTCSR that <avr/wdt.h>'s wdt_enable() targets.
+  _PROTECTED_WRITE(WDT.CTRLA, WDT_PERIOD_8KCLK_gc); // ~8.2s timeout
 }
 
 // Arduino main loop
 void loop() {
+  // Confirm to the watchdog that the loop is still running
+  wdt_reset();
+
 #ifndef ENABLE_DEBUG
   // Turn off LED
   digitalWrite(PIN_LED, LOW);
@@ -58,32 +73,36 @@ void loop() {
   digitalWrite(PIN_LED, HIGH);
 #endif
 
+  // Only drive the potentiometer off a plausible VOC reading; otherwise
+  // leave charging disabled (input likely disconnected or in the dark)
+  if(voc >= VOC_MIN_MV) {
 #ifdef ENABLE_VMPP_LOOKUP
-  // Set potentiometer to calculated MPP voltage
-  POT_set_voltage(vmpp);
+    // Set potentiometer to calculated MPP voltage
+    POT_set_voltage(vmpp);
 #else
-  // Set MPP voltage by regulation loop
-  for(uint16_t i = 0; i < (MEAS_DELAY_MS / ADC_DELAY_MS); i++) {
+    // Set MPP voltage by regulation loop
+    for(uint16_t i = 0; i < (MEAS_DELAY_MS / ADC_DELAY_MS); i++) {
 
-    // Set current potentiometer steps
-    POT_set_steps(steps);
-    delay(ADC_DELAY_MS);
+      // Set current potentiometer steps
+      POT_set_steps(steps);
+      delay(ADC_DELAY_MS);
 
-    // Measure actual voltage
-    vmpp_now = ADC_read_voltage();
+      // Measure actual voltage
+      vmpp_now = ADC_read_voltage();
 
-    // Regulate potentiometer steps
-    if(vmpp_now > vmpp) {
-      if(steps < POT_STEPS) {
-        steps++;
-      }
-    } else {
-      if(steps > 0) {
-        steps--;
+      // Regulate potentiometer steps
+      if(vmpp_now > vmpp) {
+        if(steps < POT_STEPS) {
+          steps++;
+        }
+      } else {
+        if(steps > 0) {
+          steps--;
+        }
       }
     }
-  }
 #endif
+  }
 
 #ifdef ENABLE_DEBUG
   // Print VOC and VMPP if debug enabled
