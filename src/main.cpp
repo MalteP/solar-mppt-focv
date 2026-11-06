@@ -8,7 +8,7 @@
 // K factor in percent (Open circuit voltage to MPP voltage ratio)
 #define K_PERCENT 80
 
-// Delay between VOC measurements in milliseconds
+// Period between VOC measurement cycles in milliseconds
 #define MEAS_DELAY_MS 2000
 
 // Delay between setting potentiometer and ADC capture in milliseconds.
@@ -62,6 +62,8 @@ void setup() {
 
 // Arduino main loop
 void loop() {
+  const uint32_t cycle_start = millis();
+
   // Confirm to the watchdog that the loop is still running
   wdt_reset();
 
@@ -92,26 +94,42 @@ void loop() {
     // Set potentiometer to calculated MPP voltage
     POT_set_voltage(vmpp);
 #else
-    // Set MPP voltage by regulation loop
-    for(uint16_t i = 0; i < (MEAS_DELAY_MS / ADC_DELAY_MS); i++) {
-
-      // Set current potentiometer steps
-      POT_set_steps(steps);
+    // Search until the target is bracketed by two adjacent positions.
+    // Hold the closer position for the remainder of this measurement period.
+    int32_t previous_error = 0;
+    uint16_t previous_steps = steps;
+    bool have_previous = false;
+    POT_set_steps(steps);
+    while((uint32_t)(millis() - cycle_start) + ADC_DELAY_MS < MEAS_DELAY_MS) {
       delay(ADC_DELAY_MS);
-
-      // Measure actual voltage
       vmpp_now = ADC_read_voltage();
+      const int32_t error = (int32_t)vmpp_now - vmpp;
+      const uint32_t magnitude = error < 0 ? -error : error;
 
-      // Regulate potentiometer steps, ignoring differences within the deadband
-      if(vmpp_now > vmpp + VMPP_DEADBAND_MV) {
-        if(steps < POT_STEPS) {
-          steps++;
+      if(have_previous && ((error < 0 && previous_error > 0) ||
+                           (error > 0 && previous_error < 0))) {
+        const uint32_t previous_magnitude = previous_error < 0 ? -previous_error : previous_error;
+        if(previous_magnitude <= magnitude) {
+          steps = previous_steps;
+          POT_set_steps(steps);
         }
-      } else if(vmpp_now + VMPP_DEADBAND_MV < vmpp) {
-        if(steps > 0) {
-          steps--;
-        }
+        break;
       }
+      if(magnitude <= VMPP_DEADBAND_MV) {
+        break;
+      }
+      if((error > 0 && steps == POT_STEPS) || (error < 0 && steps == 0)) {
+        break;
+      }
+      // Do not change position unless there is time to settle and measure it.
+      if((uint32_t)(millis() - cycle_start) + ADC_DELAY_MS >= MEAS_DELAY_MS) {
+        break;
+      }
+      previous_error = error;
+      previous_steps = steps;
+      have_previous = true;
+      steps = error > 0 ? steps + 1 : steps - 1;
+      POT_set_steps(steps);
     }
 #endif
   }
@@ -129,5 +147,8 @@ void loop() {
   Serial.flush();
 #endif
 
-  delay(MEAS_DELAY_MS);
+  const uint32_t elapsed = millis() - cycle_start;
+  if(elapsed < MEAS_DELAY_MS) {
+    delay(MEAS_DELAY_MS - elapsed);
+  }
 }
