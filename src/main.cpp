@@ -40,7 +40,6 @@
 // Variables
 uint16_t voc, vmpp;
 #ifndef ENABLE_VMPP_LOOKUP
-uint16_t vmpp_now;
 uint16_t steps = POT_STEPS / 2;
 #endif
 
@@ -102,7 +101,7 @@ void loop() {
     POT_set_steps(steps);
     while((uint32_t)(millis() - cycle_start) + ADC_DELAY_MS < MEAS_DELAY_MS) {
       delay(ADC_DELAY_MS);
-      vmpp_now = ADC_read_voltage();
+      const uint16_t vmpp_now = ADC_read_voltage();
       const int32_t error = (int32_t)vmpp_now - vmpp;
       const uint32_t magnitude = error < 0 ? -error : error;
 
