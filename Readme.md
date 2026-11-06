@@ -53,3 +53,12 @@ Both are disabled by default; uncomment the `#define` to enable:
 - `VMPP_DEADBAND_MV` (`src/main.cpp`) — tolerance band around VMPP
   within which the regulation loop leaves the potentiometer alone, to
   avoid dithering by one step every cycle once converged.
+
+The iterative regulator stops when it reaches the deadband or crosses the
+target between adjacent potentiometer positions. On crossing, it holds the
+position with the smaller measured voltage error (ties keep the previous
+position). Each new VOC measurement starts a fresh search.
+
+`MEAS_DELAY_MS` sets the total measurement-cycle period, including VOC
+settling, ADC reads and regulation. Only the remaining time is spent waiting;
+an overrun starts the next cycle without an additional delay.
