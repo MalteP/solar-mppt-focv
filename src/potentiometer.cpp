@@ -28,6 +28,11 @@ void POT_set_steps(uint16_t steps) {
   // Address 0h (wiper 0), Command 00 (write data)
   uint16_t data = 0x0000;
 
+  // Valid wiper positions are 0..POT_STEPS; clamp out-of-range callers
+  if(steps > POT_STEPS) {
+    steps = POT_STEPS;
+  }
+
   // Wiper position is 9 bits long
   data |= steps & 0x01FF;
 
