@@ -11,6 +11,7 @@ This project implements fractional open-circuit voltage (FOCV) tracking for a CN
 - `tests/test_regulation.py`: host-side regression tests using simulated hardware.
 - `platformio.ini`: target, clock, programmer, and serial settings.
 - `Readme.md`: wiring, calibration, and build-time options. `.pio/` contains generated build artifacts.
+- `release/rev1/`: Gerbers, BOM, and placement for ordering; `docs/images/`: board renders. `*.step` files stay local.
 
 ## Build, Test, and Development Commands
 

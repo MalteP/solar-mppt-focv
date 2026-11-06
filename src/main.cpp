@@ -18,10 +18,11 @@
 // panel or cabling changes.
 #define ADC_DELAY_MS 25
 
-// Minimum plausible VOC reading in millivolts. Below this the input is
-// treated as disconnected/invalid and charging is left disabled instead of
-// regulating off a bogus reading.
-#define VOC_MIN_MV 1000
+// Minimum valid VOC reading in millivolts. Below this the input is treated
+// as disconnected/invalid and charging is left disabled. The 5V LDO needs
+// VIN >= 7V to stay in regulation; below that VDD and the 4.3V ADC reference
+// cannot be trusted.
+#define VOC_MIN_MV 7000
 
 // Tolerance band (in millivolts) around VMPP within which the regulation
 // loop leaves the potentiometer alone, to avoid dithering by +-1 step
