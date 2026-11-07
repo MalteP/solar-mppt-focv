@@ -2,9 +2,9 @@
 
 Implementation of a Fractional Open Circuit Voltage (FOCV) Solar Tracker for my CN3722 Solar MPPT charge controller, which was (like most analog charger ICs) only tracking a fixed input voltage. Tracking is done by an ATTiny412 microcontroller and an MCP4151 digital potentiometer instead of the precision potentiometer on the circuit board.
 
-![Board, top side](docs/images/board-top.png)
+![Board, overview](docs/images/board-overview.png)
 
-*Render of the 3D model, not a photo. Copper is not shown.*
+*Rendered in the EasyEDA Pro 3D preview, not a photo.*
 
 See the following website for further details:
 
@@ -16,6 +16,8 @@ https://www.maltepoeggel.de/?site=solar-mppt-focv
 |---|---|
 | PCB | Designed in EasyEDA Pro, DRC clean, not yet manufactured |
 | Firmware | Builds and passes host tests, not yet run on this board |
+
+![Board, top side](docs/images/board-top.png)
 
 ![Board, bottom side](docs/images/board-bottom.png)
 
