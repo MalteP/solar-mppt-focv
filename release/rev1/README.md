@@ -24,7 +24,7 @@ The order instruction is in the [root README](../../Readme.md#ordering).
 ## Known differences
 
 - The Device column in `placement-rev1.csv` was corrected by hand for U2. The project still names that library device `MCP1804T-1802I/OT`, so a new export brings the old name back. The BOM part number and LCSC code are correct.
-- `assembly-rev1.step` shows a 0.09 mm board, because the project stack-up has a core thickness of 0. Do not use it to check heights. The images in `docs/images` were scaled to a 1.6 mm board. The Gerbers are not affected.
+- `assembly-rev1.step` shows a 0.09 mm board, because the project stack-up has a core thickness of 0. Do not use it to check heights. The images in `docs/images` come from the EasyEDA 3D preview, not from this file. The Gerbers are not affected.
 
 - The K2 footprint draws its pins on the bottom silkscreen beyond the board edge. Only the part on the board can be printed.
 
