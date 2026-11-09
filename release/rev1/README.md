@@ -20,6 +20,7 @@ The order instruction is in the [root README](../../Readme.md#ordering).
 - Outline: 22.73 × 13.92 mm.
 - Part bounding boxes are at least 1.0 mm from the board edge, except K2. The K2 housing is 0.6 mm from the edge and its pins extend past it. Designators are at least 0.6 mm from the edge.
 - The BOM holds U2 as `MCP1804T-5002I/OT`, C625416, and K2 as `PZ254R-11-03P`, C492411.
+- 2026-11-09: `bom-rev1.csv` exported again after unifying C3, C4, R1, R2 and R3 to Samsung CL and Yageo RC (see `BOM.md`). Only part attributes changed. Footprints and positions were unchanged, DRC on the saved PCB returned no errors, and the Gerber and placement files were not exported again.
 
 ## Known differences
 

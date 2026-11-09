@@ -23,16 +23,16 @@ Parts fitted on the board, grouped by part type. Generated from `bom-rev1.csv`, 
 | Refs | Qty | Value | Part | Manufacturer | Package | LCSC |
 |---|---|---|---|---|---|---|
 | C1, C2 | 2 | 1 µF 50 V X7R | `CL21B105KBFNNNE` | SAMSUNG | C0805 | [C28323](https://www.lcsc.com/product-detail/C28323.html) |
-| C3, C4 | 2 | 100 nF 50 V X7R | `CC0805KRX7R9BB104` | YAGEO | C0805 | [C49678](https://www.lcsc.com/product-detail/C49678.html) |
+| C3, C4 | 2 | 100 nF 50 V X7R | `CL21B104KBCNNNC` | SAMSUNG | C0805 | [C1711](https://www.lcsc.com/product-detail/C1711.html) |
 | C5 | 1 | 10 nF 50 V X7R | `CL21B103KBANNNC` | SAMSUNG | C0805 | [C1710](https://www.lcsc.com/product-detail/C1710.html) |
 
 ## Resistors
 
 | Refs | Qty | Value | Part | Manufacturer | Package | LCSC |
 |---|---|---|---|---|---|---|
-| R1 | 1 | 18 kΩ 1% | `0805W8F1802T5E` | UNI-ROYAL | R0805 | [C17506](https://www.lcsc.com/product-detail/C17506.html) |
-| R2 | 1 | 3.3 kΩ 1% | `0805W8F3301T5E` | UNI-ROYAL | R0805 | [C26010](https://www.lcsc.com/product-detail/C26010.html) |
-| R3 | 1 | 1 kΩ 1% | `0805W8F1001T5E` | UNI-ROYAL | R0805 | [C17513](https://www.lcsc.com/product-detail/C17513.html) |
+| R1 | 1 | 18 kΩ 1% | `RC0805FR-0718KL` | YAGEO | R0805 | [C114522](https://www.lcsc.com/product-detail/C114522.html) |
+| R2 | 1 | 3.3 kΩ 1% | `RC0805FR-073K3L` | YAGEO | R0805 | [C114531](https://www.lcsc.com/product-detail/C114531.html) |
+| R3 | 1 | 1 kΩ 1% | `RC0805FR-071KL` | YAGEO | R0805 | [C95781](https://www.lcsc.com/product-detail/C95781.html) |
 
 ## Connectors
 
@@ -55,5 +55,12 @@ The part number for K3 comes from the EasyEDA library record for the LCSC code. 
 | Item | Qty | Note |
 |---|---|---|
 | Wire from `K1` to the panel input of the CN3722 module | 1 | Fitted when the board is installed |
+
+## Substitutions
+
+- Ceramic capacitors are all Samsung CL, chip resistors are all Yageo RC. Changed on 2026-11-09 from mixed YAGEO CC and UNI-ROYAL parts with the same values, footprints and ratings. Only part attributes changed in EasyEDA; footprints, placement and Gerbers are unchanged.
+- `C3`, `C4` (100 nF 0805) and `D1` are the same parts as on `solar-power-module-CN3722` rev2. `R1`, `R2`, `R3` use the same Yageo RC0805 series; those values are not on the other boards.
+- `C1`, `C2` (1 µF) and `C5` (10 nF) were already Samsung CL and are unchanged. The other boards have these values only in 0603 or 1206.
+- The new parts are JLCPCB Extended parts; the replaced UNI-ROYAL resistors were Basic.
 
 Stock and prices were not checked.
