@@ -10,7 +10,7 @@ This project implements fractional open-circuit voltage (FOCV) tracking for a CN
 - `src/pins.h`: hardware pin assignments; `src/vmpp.h`: optional voltage lookup table.
 - `tests/test_regulation.py`: host-side regression tests using simulated hardware.
 - `platformio.ini`: target, clock, programmer, and serial settings.
-- `Readme.md`: wiring, calibration, and build-time options. `.pio/` contains generated build artifacts.
+- `README.md`: wiring, calibration, and build-time options. `.pio/` contains generated build artifacts.
 - `release/rev1/`: Gerbers, BOM, and placement for ordering; `docs/images/`: board renders. `*.step` files stay local.
 
 ## Build, Test, and Development Commands
@@ -40,4 +40,4 @@ Simulation does not validate electrical behavior: verify VOC settling time and c
 
 Existing commits use short imperative subjects, such as “Fix ADC full-scale divisor” and “Document wiring.” Follow that style and keep commits focused.
 
-Pull requests should explain the behavior change, list build/test results, link relevant issues, and identify hardware assumptions or calibration changes. Update `Readme.md` when wiring or configuration changes. Preserve unrelated local edits and avoid committing generated artifacts or machine-specific port changes unintentionally.
+Pull requests should explain the behavior change, list build/test results, link relevant issues, and identify hardware assumptions or calibration changes. Update `README.md` when wiring or configuration changes. Preserve unrelated local edits and avoid committing generated artifacts or machine-specific port changes unintentionally.
